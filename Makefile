@@ -1,5 +1,5 @@
 all:
-	Rscript -e 'library(methods); library(roxygen2); roxygenize(".")'
+	Rscript -e 'library(methods); library(roxygen2); library(devtools); devtools::document()'
 	R CMD INSTALL .
 #	Rscript install.r man
 

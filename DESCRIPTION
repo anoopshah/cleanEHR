@@ -28,7 +28,7 @@ Imports:
     knitr
 VignetteBuilder: knitr
 URL: https://github.com/CC-HIC/cleanEHR, http://www.hic.nihr.ac.uk
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Collate:
     'RcppExports.R'
     'ccRecord.R'

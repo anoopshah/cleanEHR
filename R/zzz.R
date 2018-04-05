@@ -1,4 +1,8 @@
 .onLoad <- function(libname = find.package("cleanEHR"), pkgname = "cleanEHR") {
+	# Prepare lookup tables and load them into the package namespace
+
+	# env is the package namespace (i.e. the parent environment of this
+	# function)
     env <- parent.env(environment())
     
     # Assign ITEM_REF tables
@@ -12,8 +16,6 @@
     names(icnarc.dict) <- as.character(icnarc_table$code)
     
     assign("icnarc.dict", icnarc.dict, envir=env)
-  
-
     unit.dict <- unlist(sapply(ITEM_REF, function(x) x$Units))
     assign("unit.dict", unit.dict, envir=env)
 
@@ -29,7 +31,6 @@
     names(meta) <- paste0(names(stname), ".meta")
     code2stname.dict <- c(stname, meta)
     stname2code.dict <- reverse.name.value(code2stname.dict)
-
 
     longnames <- vapply(ITEM_REF, function(x) x$dataItem, "")
     stname2longname.dict <- longnames

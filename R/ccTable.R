@@ -256,6 +256,8 @@ ccTable$methods(
                 })
 
 itemsToDataFrame <- function(ep, items, period_length, freq) {
+	# Converts 
+	
     listmatrix <- list()
     time <- seq(0, period_length, freq)
 
@@ -298,7 +300,7 @@ ccd_select_table <- function(record, items_opt=NULL, items_obg=NULL, freq,
 
     env <- environment()
     lt <- list()
-    stopifnot(is.list(env$lt)) # totally redundent, just to avoid an anonying
+    stopifnot(is.list(env$lt)) # totally redundant, just to avoid an anonying
     # note says env is assigned but not used!
     for_each_episode(record,
                      function(ep) {
@@ -431,9 +433,10 @@ findMaxTime <- function(episode) {
 
 #' Get the length of stay based on the first and the last data point. 
 #' 
-#' @param e ccEpisode object.
-#' @param unit character string.  Units in which the results are desired. Can be abbreviated.
-#' @return length of stay
+#' @param e ccEpisode object, represending a single episode.
+#' @param unit character; units of time in which to return the output:
+#'   "secs", "mins", "hours", "days" or "weeks"
+#' @return a numeric of length 1, giving the length of stay
 #' @export getEpisodePeriod
 getEpisodePeriod <- function (e, unit="hours") {
     # pseudo delta period, see addPseudoTime()
@@ -478,10 +481,14 @@ getEpisodePeriod <- function (e, unit="hours") {
     return(period_length)
 }
 
-#' Propagate a numerical delta time interval record.
+#' Propagate a numerical delta time interval record
 #'
-#' @param record ccRecord
-#' @param delta time frequency in hours
+#' Creates a new ccRecord in which each data item within each episode has
+#' a specified cadence, with missing data filled by the Last Observation
+#' Carried Forward method.
+#'
+#' @param record a ccRecord object representing a set of critical care episodes 
+#' @param delta time interval between data rows
 #' @details when discharge time and admission time are missing, the latest  and
 #' the earliest data time stamp will be used instead.
 reallocateTimeRecord <- function(record, delta=0.5) {
@@ -500,6 +507,8 @@ reallocateTimeRecord <- function(record, delta=0.5) {
                                    return(d)
                            }))
     }
+    # Create a list of episodes, each with reallocated time
     newdata <- for_each_episode(record, reallocate.episode)
+    # Combine all the reallocated time episodes into a new ccRecord 
     return(ccRecord() + newdata)
 }

@@ -9,4 +9,3 @@ This dataset has the same data strucutre that of the CCHIC data, though
 the data are synthetic.
 }
 \keyword{data}
-

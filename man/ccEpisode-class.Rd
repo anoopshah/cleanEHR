@@ -2,8 +2,8 @@
 % Please edit documentation in R/ccRecord.R
 \docType{class}
 \name{ccEpisode-class}
-\alias{ccEpisode}
 \alias{ccEpisode-class}
+\alias{ccEpisode}
 \title{The S4 class which holds data of a single episode.}
 \description{
 The S4 class which holds data of a single episode.

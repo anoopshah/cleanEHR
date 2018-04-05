@@ -26,4 +26,3 @@ plot_episode(ccd@episodes[[1]]) # plot first episode with default variables.
 plot_episode(ccd@episodes[[1]], "h_rate") # plot first episode heart rate
 }
 }
-

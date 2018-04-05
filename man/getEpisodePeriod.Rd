@@ -7,14 +7,14 @@
 getEpisodePeriod(e, unit = "hours")
 }
 \arguments{
-\item{e}{ccEpisode object.}
+\item{e}{ccEpisode object, represending a single episode.}
 
-\item{unit}{character string.  Units in which the results are desired. Can be abbreviated.}
+\item{unit}{character; units of time in which to return the output:
+"secs", "mins", "hours", "days" or "weeks"}
 }
 \value{
-length of stay
+a numeric of length 1, giving the length of stay
 }
 \description{
 Get the length of stay based on the first and the last data point.
 }
-

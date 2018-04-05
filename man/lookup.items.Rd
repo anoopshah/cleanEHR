@@ -19,4 +19,3 @@ character the short names of the selected items.
 This function tries to match keywords in short names, long names and NHIC code. 
 The matched items will be displayed.
 }
-

@@ -2,20 +2,21 @@
 % Please edit documentation in R/ccTable.R
 \name{reallocateTimeRecord}
 \alias{reallocateTimeRecord}
-\title{Propagate a numerical delta time interval record.}
+\title{Propagate a numerical delta time interval record}
 \usage{
 reallocateTimeRecord(record, delta = 0.5)
 }
 \arguments{
-\item{record}{ccRecord}
+\item{record}{a ccRecord object representing a set of critical care episodes}
 
-\item{delta}{time frequency in hours}
+\item{delta}{time interval between data rows}
 }
 \description{
-Propagate a numerical delta time interval record.
+Creates a new ccRecord in which each data item within each episode has
+a specified cadence, with missing data filled by the Last Observation
+Carried Forward method.
 }
 \details{
 when discharge time and admission time are missing, the latest  and
 the earliest data time stamp will be used instead.
 }
-
