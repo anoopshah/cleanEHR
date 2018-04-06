@@ -399,7 +399,7 @@ create2dclean <- function(record, config, freq=1, nchunks=1) {
 
 #' @importFrom Rcpp evalCpp
 #' @useDynLib cleanEHR 
-reallocateTime <- function(d, t_discharge, frequency) {
+reallocateTimeOld <- function(d, t_discharge, frequency) {
     d_ <- d
     stopifnot(any(names(d) == "time"))
     stopifnot(any(names(d) == "item2d"))
@@ -407,6 +407,70 @@ reallocateTime <- function(d, t_discharge, frequency) {
     return(reallocateTime_(d_, t_discharge, frequency))
 }
 
+#' Record observations within standardised time intervals
+#'
+#' Data may be recorded at arbitrary time points relative to an index
+#' time (time = 0 at the beginning of the episode). This function
+#' converts all times to intervals closed at the lower bound and open
+#' at the upper bound. The first time intervals has lower bound zero
+#' and all intervals are labelled with their lower bound.
+#'
+#' For example, if \code{t_discharge} is 5 and \code{frequency} is 1
+#' the output time intervals will be labelled 0, 1, 2, 3, 4, 5.
+#' Time interval 5 will include the latest observation with time
+#' >= 5 and <6.
+#' 
+#' If there are multiple time points without additional
+#' observations in between, the intervening time points are returned
+#' missing (NA) values.
+#' 
+#' @param d a data.frame containing columns \code{time} (numeric),
+#'     \code{item2d} (any data type) and optionally \code{meta}
+#' @param t_discharge numeric vector with one element, giving the 
+#'     maximum time that needs to be included in the output 
+#' @param frequency numeric vector with one element, giving the period
+#'     between observations, in the same units as \code{d$time} and
+#'     \code{t_discharge}
+#'
+#' @return a data.frame with columns \code{time} (numeric),
+#'     \code{val} (factor) and optionally \code{meta} (factor)
+#'
+#' @examples
+#' reallocateTime(data.frame(time = c(0.7, 1.3, 3, 3.1),
+#'     item2d = c(1, 2, 3, 4),
+#'     meta = c('lying', 'sitting', 'hidden', 'standing')), 5.2, 0.5)
+#'
+#' @export
+reallocateTime <- function(d, t_discharge, frequency) {
+	stopifnot(is.numeric(t_discharge), is.numeric(frequency),
+	    length(t_discharge) == 1, length(frequency) == 1)
+    stopifnot("time" %in% names(d), "item2d" %in% names(d))
+    stopifnot(class(d$time) == "numeric")
+    
+    n_intervals <- floor(t_discharge / frequency) + 1
+	D <- as.data.table(d)
+	D[, .interval := floor(time / frequency)] # which interval number
+	D[, .near_end_of_interval := .interval + 1 - time / frequency]
+	
+	# Select the first entry in each interval (i.e. the one closest
+	# to the end) and join it to a vector of all times
+	setkey(D, .interval, .near_end_of_interval)
+	D <- D[, .SD[1], by = .interval][DT(.interval = 0:(n_intervals - 1))]
+	D[, .interval := NULL]
+
+	# Convert data types and rename columns to resemble old
+	# reallocateTime function, dropping any columns that are not 'meta'
+	# Missing values are returned as factors with level 'NA'
+	if ('meta' %in% names(D)){
+		D <- D[, list(time, val = factor(item2d, exclude = FALSE),
+		    meta = factor(meta, exclude = FALSE))][order(time)]
+	} else {
+		D <- D[, list(time, val = factor(item2d, exclude = FALSE))][
+		    order(time)]
+	}
+	# Return a data.frame
+	return(as.data.frame(D))
+}
 
 findMaxTime <- function(episode) {
     get2dTime <- function(episode){

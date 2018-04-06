@@ -36,6 +36,8 @@ DataFrame reallocateTime_(DataFrame d, const float t_discharge, const float freq
             df_in.insert(std::pair<float, std::string>(tin[i], as<std::string>(valin[i])));
     }
     float tt = 0;
+    // create a vector of new standardised times (from 0 to t_discharge,
+    // incrementing by frequency)
     while(tt <= t_discharge) {
         vnew.push_back("NA");
         tnew.push_back(tt);
